@@ -1,0 +1,40 @@
+1. Furniture is a profit trap.
+
+Data: Furniture sales are $742K (32% of total) but profit is only $18.5K, a 2.5% margin. Technology earns $145K at 17.4%, and Office Supplies earns $122K at 17.0%.
+Why: Furniture has almost the same sales as Technology but earns about 8x less profit.
+Action: Reprice Furniture and find out why costs or discounts are eating the margin.
+
+2. Discounts above 20% destroy profit.
+
+Data: Profit by discount band:
+Discount	Profit	Lines
+0%	+$321K	4,798
+11–20%	+$91.8K	3,709
+21–40%	–$35.8K	460
+>40%	–$99.6K	933
+Combined: Lines over 20% lose about $135K across 1,393 lines. That is 47% of the company's total $286K profit, given away.
+Example: Tables have $207K in sales but lose $17.7K.
+Action: Cap discounts at about 20%, with approval needed above that.
+
+3. Central is the weakest region, and it discounts the most.
+
+Data:
+Region	Sales	Profit	Margin	Avg discount
+West	$725K	$108K	14.9%	11%
+East	$679K	$92K	13.5%	14.5%
+South	$392K	$47K	11.9%	14.7%
+Central	$501K	$40K	7.9%	24%
+Why: Central has more sales than South but less than half of West's profit. Central's discounts over 20% lost $52K. Furniture in Central loses $2.9K overall.
+Action: Audit Central's discount policy first. Texas is the worst state at –$25.7K, followed by Ohio (–$17.0K) and Pennsylvania (–$15.6K).
+
+4. Sales are strongly seasonal, and growth is accelerating.
+
+Data: Top months by sales are Nov $352K, Dec $325K, Sep $308K, Mar $205K, and Oct $200K. Sep, Nov, Dec, and Mar together are 52% of sales.
+Growth: Annual sales were $484K (2015), $471K (2016, –2.8%), $609K (2017, +29.5%), and $733K (2018, +20.4%).
+Action: Build inventory, staffing, and campaigns before Sep and Nov. Margin does hold up in these peak months.
+
+5. A few products carry the profit, and many lose money.
+
+Data: Copiers earn $55.6K at a 37% margin from only 234 units sold. The Canon imageCLASS 2200 alone makes $25.2K. Paper (43%), Labels (44%), and Envelopes (42%) have the best margins.
+Poor performers: 301 of 1,850 products lose money, –$77K in total. Worst offenders by margin are the Cubify CubeX 3D Printer Double Head (–80%), the Cubify Triple Head (–48%), and the Lexmark MX611dhe (–27%). Tables (–$17.7K), Bookcases (–$3.5K), and Supplies (–$1.2K) are the loss-making sub-categories.
+Action: Reprice or stop selling the loss-making items, and promote the high-margin ones.
