@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Sales Performance Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#1b2433;--mu:#6b7686;--bd:#e3e8ef;--ac:#2563eb;--neg:#dc2626;--pos:#059669}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1520;--card:#182030;--tx:#e8edf5;--mu:#93a0b4;--bd:#27324a;--ac:#5b9bff;--neg:#f87171;--pos:#34d399}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:16px}
+h1{font-size:20px;margin:0}.sub{color:var(--mu);font-size:13px}
+.top{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:14px}
+select{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:7px 10px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px}
+.kpi .l{font-size:12px;color:var(--mu)}.kpi .v{font-size:24px;font-weight:700;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-bottom:12px}
+.card h2{font-size:14px;margin:0 0 10px}.ch{position:relative;height:260px}
+.wide{grid-column:1/-1}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--bd)}td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}.neg{color:var(--neg)}.pos{color:var(--pos)}
+ol{margin:0;padding-left:18px;font-size:13px;line-height:1.55}li{margin-bottom:6px}
+</style></head><body>
+<div class="top"><div><h1>Sales Performance Dashboard</h1><div class="sub">Superstore US orders, Jan 2015 – Dec 2018 · 9,994 order lines</div></div>
+<div><select id="fy"></select> <select id="fr"></select> <select id="fc"></select></div></div>
+<div class="kpis" id="kpis"></div>
+<div class="grid">
+<div class="card wide"><h2>Monthly sales &amp; profit</h2><div class="ch"><canvas id="c1"></canvas></div></div>
+<div class="card"><h2>Sales by category</h2><div class="ch"><canvas id="c2"></canvas></div></div>
+<div class="card"><h2>Sales share by region</h2><div class="ch"><canvas id="c3"></canvas></div></div>
+<div class="card wide"><h2>Profit by sub-category (red = loss-making)</h2><div class="ch" style="height:340px"><canvas id="c4"></canvas></div></div>
+<div class="card"><h2>Top 5 products by profit</h2><div class="scroll"><table id="t1"></table></div></div>
+<div class="card"><h2>Bottom 5 products by profit</h2><div class="scroll"><table id="t2"></table></div></div>
+</div>
+<div class="card"><h2>Key business insights (full dataset)</h2><ol>
+<li><b>Furniture is a profit trap.</b> Sales of $742K (32% of total) yield only $18K profit (2.5% margin) vs ~17% for Technology and Office Supplies.</li>
+<li><b>Discounts above 20% destroy profit.</b> Lines discounted over 20% lost $135K combined (1,393 lines); undiscounted lines earned $321K. Heavily discounted Tables alone lose $17.7K despite $207K sales.</li>
+<li><b>Central region underperforms.</b> Its margin is 7.9% vs 14.9% in West, and it gives the deepest average discount (24% vs 11% in West). Central lost $52K on lines discounted over 20%.</li>
+<li><b>Sales are strongly seasonal.</b> Sep, Nov, Dec and Mar hold 52% of annual sales; November is the peak ($352K). Sales grew 29.5% in 2017 and 20.4% in 2018.</li>
+<li><b>Technology copiers are the profit engine.</b> Copiers earn $55.6K at 37% margin on only 234 units; Canon imageCLASS 2200 alone makes $25.2K. Meanwhile 301 of 1,850 products lose money, totalling –$77K.</li></ol>
+<div class="sub" style="margin-top:8px"><b>Recommendations:</b> cap discounts at ~20% (esp. Furniture/Tables/Bookcases, Central); reprice or drop loss-making products; build inventory and campaigns ahead of Sep–Dec; push Copiers/Accessories/Paper where margins are 25–43%.</div></div>
+<script>
+const R=__ROWS__,P=__PRODS__;
+const $=id=>document.getElementById(id),fmt=n=>'$'+Math.round(n).toLocaleString('en-US'),k=n=>Math.abs(n)>=1e6?'$'+(n/1e6).toFixed(2)+'M':Math.abs(n)>=1e3?'$'+(n/1e3).toFixed(1)+'K':'$'+n.toFixed(0);
+const opts=(id,l,a)=>{$(id).innerHTML=`<option value="">${l}</option>`+a.map(x=>`<option>${x}</option>`).join('')};
+opts('fy','All years',[2015,2016,2017,2018]);opts('fr','All regions',['Central','East','South','West']);opts('fc','All categories',['Furniture','Office Supplies','Technology']);
+const COL=['#2563eb','#059669','#f59e0b','#8b5cf6'];let ch={};
+function agg(rows,i){const m={};rows.forEach(r=>{const key=r[i];(m[key]=m[key]||{s:0,p:0}).s+=r[7];m[key].p+=r[8]});return m}
+function draw(id,cfg){ch[id]&&ch[id].destroy();Chart.defaults.color=getComputedStyle(document.body).color;ch[id]=new Chart($(id),cfg)}
+function render(){
+ const y=$('fy').value,rg=$('fr').value,c=$('fc').value;
+ const D=R.filter(r=>(!y||r[0]==y)&&(!rg||r[2]==rg)&&(!c||r[3]==c));
+ const S=D.reduce((a,r)=>a+r[7],0),Pf=D.reduce((a,r)=>a+r[8],0),Q=D.reduce((a,r)=>a+r[9],0),O=new Set(D.map(r=>r[6])).size;
+ $('kpis').innerHTML=[['Total Sales',k(S)],['Total Profit',k(Pf)],['Profit Margin',(S?Pf/S*100:0).toFixed(1)+'%'],['Total Orders',O.toLocaleString()],['Total Quantity',Q.toLocaleString()]].map(x=>`<div class="card kpi"><div class="l">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+ const mo=agg(D,1),ml=Object.keys(mo).sort();
+ draw('c1',{type:'line',data:{labels:ml,datasets:[{label:'Sales',data:ml.map(m=>mo[m].s),borderColor:COL[0],tension:.3,pointRadius:1.5},{label:'Profit',data:ml.map(m=>mo[m].p),borderColor:COL[1],tension:.3,pointRadius:1.5}]},options:{maintainAspectRatio:false,scales:{y:{ticks:{callback:v=>k(v)}},x:{ticks:{maxTicksLimit:12}}}}});
+ const ca=agg(D,3),cl=Object.keys(ca);
+ draw('c2',{type:'bar',data:{labels:cl,datasets:[{label:'Sales',data:cl.map(x=>ca[x].s),backgroundColor:COL[0]},{label:'Profit',data:cl.map(x=>ca[x].p),backgroundColor:COL[1]}]},options:{maintainAspectRatio:false,scales:{y:{ticks:{callback:v=>k(v)}}}}});
+ const ra=agg(D,2),rl=Object.keys(ra);
+ draw('c3',{type:'doughnut',data:{labels:rl,datasets:[{data:rl.map(x=>ra[x].s),backgroundColor:COL}]},options:{maintainAspectRatio:false,plugins:{tooltip:{callbacks:{label:t=>t.label+': '+fmt(t.raw)}}}}});
+ const sa=agg(D,4),sl=Object.keys(sa).sort((a,b)=>sa[a].p-sa[b].p);
+ draw('c4',{type:'bar',data:{labels:sl,datasets:[{label:'Profit',data:sl.map(x=>sa[x].p),backgroundColor:sl.map(x=>sa[x].p<0?'#dc2626':'#059669')}]},options:{indexAxis:'y',maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>k(v)}}}}});
+ const pa=agg(D,5),pl=Object.keys(pa).sort((a,b)=>pa[b].p-pa[a].p);
+ const tb=a=>'<tr><th>Product</th><th class="n">Sales</th><th class="n">Profit</th></tr>'+a.map(i=>`<tr><td>${P[i].slice(0,42)}</td><td class="n">${fmt(pa[i].s)}</td><td class="n ${pa[i].p<0?'neg':'pos'}">${fmt(pa[i].p)}</td></tr>`).join('');
+ $('t1').innerHTML=tb(pl.slice(0,5));$('t2').innerHTML=tb(pl.slice(-5).reverse());
+}
+['fy','fr','fc'].forEach(i=>$(i).onchange=render);render();
+</script></body></html>

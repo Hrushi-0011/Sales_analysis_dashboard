@@ -1,0 +1,8 @@
+Raw file shape: (10800, 21)
+Issue A - structural: 806 rows belong to other sheets (Returns list/People list), not sales. Separated them. Kept 9994 sales rows; extracted 296 unique returned Order IDs.
+Issue B - duplicates in sales rows: 0 full duplicates, 0 duplicate Row IDs. (The 504 'duplicates' in the raw file were all inside the Returns block: an order with several returned items is listed repeatedly.)
+Issue C - types: dates parsed text->datetime; Sales/Discount/Profit->float; Quantity/Row ID->int.
+Issue D - missing: 11 Postal Codes missing, all Burlington, Vermont -> filled with 05401. No other nulls.
+Issue E - invalid values checked: {'Sales<=0': np.int64(0), 'Qty<=0': np.int64(0), 'Discount outside 0-1': np.int64(0), 'Ship<Order date': np.int64(0)}. All zero. Negative Profit kept: it is a genuine loss, not an error.
+Issue F - consistency: whitespace trimmed; categorical columns checked (Region=['Central', 'East', 'South', 'West'], Category=['Furniture', 'Office Supplies', 'Technology']) - no spelling variants.
+Final cleaned shape: (9994, 27)
